@@ -9,10 +9,11 @@
  
      <!-- Bootstrap CSS -->
      <!-- build:css css/main.css -->
-     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
-     <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
-     <link rel="stylesheet" href="node_modules/bootstrap-social/bootstrap-social.css">
-     <link rel="stylesheet" href="css/style-old.css">
+    <link rel="stylesheet" href="{{url_for('static',filename='node_modules/bootstrap/dist/css/bootstrap.min.css')}}">
+    
+    <link rel="stylesheet" href="{{url_for('static',filename='node_modules/font-awesome/css/font-awesome.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='node_modules/bootstrap-social/bootstrap-social.css')}}">
+    <link rel="stylesheet" href="static/css/style-old.css">
      <!-- endbuild -->
 
 
@@ -26,12 +27,11 @@
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#Navbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="./index.html"><img src="img/logo.png" height="30" width="41"></a>
+            <a class="navbar-brand" href="{{url_for('index')}}"><img src="../static/img/logo.png" height="30" width="41"></a>
            <div class="collapse navbar-collapse" id="Navbar">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item"><a class="nav-link" href="./index.html"><span class="fa fa-home fa-lg"> Home</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{url_for('index')}}"><span class="fa fa-home fa-lg"> Home</span></a></li>
                     <li class="nav-item active"><a class="nav-link" href="#"><span class="fa fa-list fa-lg"> Compare</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="#"><span class="fa fa-list fa-lg"> Menu</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="./contactus.html"><span class="fa fa-address-card fa-lg"> Contact</span></a></li>
                 </ul>
            </div>
@@ -230,10 +230,10 @@
     </footer>
 
     <!-- build:js js/main.js -->
-    <script src="node_modules/jquery/dist/jquery.slim.min.js"></script>
-    <script src="node_modules/popper.js/dist/umd/popper.min.js"></script>
-    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="js/scripts.js"></script>
+<script src="{{url_for('static',filename='node_modules/jquery/dist/jquery.slim.min.js')}}"></script>
+<script src="{{url_for('static',filename='node_modules/popper.js/dist/umd/popper.min.js')}}"></script>
+<script src="{{url_for('static',filename='node_modules/bootstrap/dist/js/bootstrap.min.js')}}"></script>
+<script src="static/js/scripts.js"></script>
     <!-- endbuild -->
 
     
