@@ -25,9 +25,9 @@
             <a class="navbar-brand" href="#"><img src="img/logo.png" height="30" width="41"></a>
             <div class="collapse navbar-collapse" id="Navbar">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active"><a class="nav-link" href="#"><span class="fa fa-home fa-lg">
+                    <li class="nav-item active"><a class="nav-link" href="{{url_for('index')}}"><span class="fa fa-home fa-lg">
                                 Home</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="./compare.html"><span class="fa fa-list fa-lg">
+                    <li class="nav-item"><a class="nav-link" href="{{url_for('compare_summary')}}"><span class="fa fa-list fa-lg">
                                 Compare</span></a></li>
                     <li class="nav-item"><a class="nav-link" href="#"><span class="fa fa-list fa-lg"> Menu</span></a>
                     </li>
@@ -48,8 +48,9 @@
             <div class="row row-header">
                 <div class="col-12 col-sm-6">
                     <h1>Text Summarization</h1>
-                    <p>We take inspiration from the World's best cuisines, and create a unique fusion experience. Our
-                        lipsmacking creations will tickle your culinary senses!</p>
+                    <p>We rigorously transform sophisticated, complex, and long texts into clear and easy-to-read summaries, getting rid of
+                    unstructured information that may confuse and tire readers. We eliminate information overload and ensure smooth natural
+                    language generation.</p>
                 </div>
                 
             </div>
@@ -117,17 +118,25 @@
         
         <div class="row row-content">
             <div class="col col-sm-6">
-                <h2 class="title-heading">Whole text</h2>              
-                <textarea class="col col-11" rows="10" name="styled-textarea" id="styled" onfocus="this.value=''; setbg('#e5fff3');"
+                <h2 class="title-heading">Input text</h2> 
+                <form method="POST" action="/analyze">
+                    <textarea name="rawtext" class="col col-11" rows="10" required="true"
+                        id="styled" onfocus="this.value=''; setbg('#e5fff3');"
                     onblur="setbg('white')" placeholder="Enter your paragraph here..."></textarea>
-            </div>
+
+                    <br />
+                    <button class="btn btn-danger btn-rounded" type="reset">Clear</button>
+                    <button class="btn btn-success btn-rounded" type="submit">Summarize</button>
+                
+                </form>
+                
+            </div>     
             <div class="col col-sm-6">
                 <h2>Text Summarization</h2>
                 <textarea class="col col-11" rows="10" name="styled-textarea" id="styled" onfocus="this.value=''; setbg('#e5fff3');"
                     onblur="setbg('white')" placeholder="Your Text Summarization..."></textarea>
             </div>
-            <button type="button" class="btn btn-success btn-rounded">Summarize</button>
-            <button type="button" class="btn btn-danger btn-rounded">Clear</button>
+                
         </div>
        
 
@@ -139,9 +148,8 @@
                 <div class="col-4 offset-1 col-sm-2">
                     <h5>Links</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#">Home</a></li>
-                        <li><a href="./aboutus.html">About</a></li>
-                        <li><a href="#">Menu</a></li>
+                        <li><a href="{{url_for('index')}}">Home</a></li>
+                        <li><a href="{{url_for('compare_summary')}}">Compare</a></li>
                         <li><a href="#">Contact</a></li>
                     </ul>
                 </div>
