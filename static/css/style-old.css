@@ -117,3 +117,9 @@ textarea#styled {
   /* margin: 10px;
   align-items: center; */
 }
+
+.logo {
+  height: 200px;
+  width: 200px;
+  margin-left: 150px;
+}
