@@ -85,14 +85,43 @@ def compare():
 def analyze_url():
     start = time.time()
     if request.method == 'POST':
-        raw_url = request.form['raw_url']
+        try:
+            raw_url = request.form['raw_url']
+        except urlopen.error.URLError as e:
+            ResponseData = e.read().decode("utf8", 'ignore')
+            print("error:", ResponseData)
         rawtext = get_text(raw_url)
         final_reading_time = readingTime(rawtext)
-        final_summary = text_summarizer(rawtext)
+        final_summary = summarize(rawtext)
         summary_reading_time = readingTime(final_summary)
         end = time.time()
         final_time = end-start
-    return render_template('index.html', ctext=rawtext, final_summary=final_summary, final_time=final_time, final_reading_time=final_reading_time, summary_reading_time=summary_reading_time)
+    return render_template('index.html', final_summary=final_summary, summary_reading_time=summary_reading_time, ctext=rawtext, final_reading_time=final_reading_time,)
+
+
+@app.route('/analyze_compare_url', methods=['GET', 'POST'])
+def analyze_compare_url():
+    raw_url = request.form['raw_url']
+    rawtext = get_text(raw_url)
+    # Spacy Summarizer
+    final_reading_time = readingTime(rawtext)
+    final_summary_spacy = text_summarizer(rawtext)
+    summary_reading_time = readingTime(final_summary_spacy)
+    spacy_words = len(final_summary_spacy.split())
+    # Gensim Summarizer
+    final_summary_gensim = summarize(rawtext)
+    summary_reading_time_gensim = readingTime(final_summary_gensim)
+    genism_words = len(final_summary_gensim.split())
+    # NLTK
+    final_summary_nltk = nltk_summarizer(rawtext)
+    summary_reading_time_nltk = readingTime(final_summary_nltk)
+    nltk_words = len(final_summary_nltk.split())
+    # Sumy
+    final_summary_sumy = sumy_summary(rawtext)
+    summary_reading_time_sumy = readingTime(final_summary_sumy)
+    sumy_words = len(final_summary_sumy.split())
+
+    return render_template('compare.html', spacy_words=spacy_words, genism_words=genism_words, nltk_words=nltk_words, sumy_words=sumy_words, final_summary_spacy=final_summary_spacy, final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,  final_summary_sumy=final_summary_sumy, summary_reading_time=summary_reading_time, summary_reading_time_gensim=summary_reading_time_gensim, summary_reading_time_sumy=summary_reading_time_sumy, summary_reading_time_nltk=summary_reading_time_nltk)
 
 
 @app.route('/comparer', methods=['GET', 'POST'])

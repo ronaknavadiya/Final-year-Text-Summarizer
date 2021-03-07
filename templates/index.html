@@ -114,15 +114,24 @@
                     <textarea name="rawtext" class="col col-11" rows="10" required="true" id="styled"
                         onfocus="this.value=''; setbg('#e5fff3');" onblur="setbg('white')"
                         placeholder="Enter your paragraph here..."></textarea>
-                    
                     <br />
                     <button class="btn btn-danger btn-rounded" type="reset">Clear</button>
                     <button class="btn btn-success btn-rounded" type="submit">Summarize</button>
-        
                 </form>
-        
+            </div>
+            <div class="col col-sm-6">
+                <h2 class="title-heading">Content URL</h2>
+                <form method="POST" action="/analyze_url">
+                    <input type="text" name="raw_url" placeholder="Enter URL Here"  required="true" style="width: 100%">
+                    <br>
+                    <br>
+                    <button class="btn btn-danger btn-rounded" type="reset">Clear</button>
+                    <button class="btn btn-success btn-rounded" type="submit">Summarize</button>
+                </form>
             </div>
         </div>
+
+        
 
         <div class="row row-content">
             <div class="col col-sm-6">
@@ -134,9 +143,7 @@
 
                     <br />
                     <p>Reading Time: <span style="color:#0091EA;">{{ final_reading_time }} min </span></p>
-
                 </form>
-
             </div>
             <div class="col col-sm-6">
                 <h2>Text Summarization</h2>
