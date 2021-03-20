@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from flask import Flask, render_template, url_for, request
 from main_summary import main_summary
 import requests
+import re
 
 from spacy_summarization import text_summarizer
 import time
@@ -47,6 +48,9 @@ def get_text(url):
     htmldata = getdata(url)
     soup = BeautifulSoup(htmldata, 'html.parser')
     finalText = ' '.join(map(lambda p: p.text, soup.find_all('p')))
+    # removing refrence tag
+    finalText = re.sub(r"\[.*?\]+", '', finalText)
+    finalText = finalText.replace('\n', '')[:-11]
     return finalText
 
 
@@ -82,6 +86,7 @@ def analyze_url():
             print("error:", ResponseData)
 
         rawtext = get_text(raw_url)
+
         final_reading_time = readingTime(rawtext)
         final_summary = main_summary(rawtext)
         summary_reading_time = readingTime(final_summary)
