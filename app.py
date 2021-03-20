@@ -4,10 +4,12 @@ from sumy.nlp.tokenizers import Tokenizer
 from sumy.parsers.plaintext import PlaintextParser
 from nltk_summarization import nltk_summarizer
 from gensim.summarization import summarize
+import urllib
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 from flask import Flask, render_template, url_for, request
 from main_summary import main_summary
+import requests
 
 from spacy_summarization import text_summarizer
 import time
@@ -15,24 +17,8 @@ import spacy
 nlp = spacy.load('en_core_web_sm')
 app = Flask(__name__)
 
-
-# from __future__ import unicode_literals
-# from flask import Flask,render_template,url_for,request
-
-# from spacy_summarization import text_summarizer
-# import time
-# import spacy
-# nlp = spacy.load('en_core_web_sm')
-# app = Flask(__name__)
-
-# # Web Scraping Pkg
-# from bs4 import BeautifulSoup
-# # from urllib.request import urlopen
-# from urllib.request import urlopen
-
-# Sumy Pkg
-
 # Sumy
+
 
 def sumy_summary(docx):
     parser = PlaintextParser.from_string(docx, Tokenizer("english"))
@@ -42,8 +28,9 @@ def sumy_summary(docx):
     result = ' '.join(summary_list)
     return result
 
-
 # Reading Time
+
+
 def readingTime(mytext):
     total_words = len([token.text for token in nlp(mytext)])
     estimatedTime = total_words/200.0
@@ -53,10 +40,14 @@ def readingTime(mytext):
 
 
 def get_text(url):
-    page = urlopen(url)
-    soup = BeautifulSoup(page)
-    fetched_text = ' '.join(map(lambda p: p.text, soup.find_all('p')))
-    return fetched_text
+    def getdata(url):
+        r = requests.get(url)
+        return r.text
+
+    htmldata = getdata(url)
+    soup = BeautifulSoup(htmldata, 'html.parser')
+    finalText = ' '.join(map(lambda p: p.text, soup.find_all('p')))
+    return finalText
 
 
 @app.route('/')
@@ -86,12 +77,13 @@ def analyze_url():
     if request.method == 'POST':
         try:
             raw_url = request.form['raw_url']
-        except urlopen.error.URLError as e:
-            data = e.read().decode("utf8", 'ignore')
-            print("error:", data)
+        except urllib.error.URLError as e:
+            ResponseData = e.reason
+            print("error:", ResponseData)
+
         rawtext = get_text(raw_url)
         final_reading_time = readingTime(rawtext)
-        final_summary = summarize(rawtext)
+        final_summary = main_summary(rawtext)
         summary_reading_time = readingTime(final_summary)
         spacy_words = len(final_summary.split())
         ctext_words = len(rawtext.split())
@@ -100,7 +92,11 @@ def analyze_url():
 
 @app.route('/analyze_compare_url', methods=['GET', 'POST'])
 def analyze_compare_url():
-    raw_url = request.form['raw_url']
+    try:
+        raw_url = request.form['raw_url']
+    except urllib.error.URLError as e:
+        ResponseData = e.reason
+        print("error:", ResponseData)
     rawtext = get_text(raw_url)
     # Spacy Summarizer
     final_summary_spacy = text_summarizer(rawtext)
@@ -110,16 +106,16 @@ def analyze_compare_url():
     final_summary_gensim = summarize(rawtext)
     summary_reading_time_gensim = readingTime(final_summary_gensim)
     genism_words = len(final_summary_gensim.split())
-    # NLTK
-    final_summary_nltk = nltk_summarizer(rawtext)
-    summary_reading_time_nltk = readingTime(final_summary_nltk)
-    nltk_words = len(final_summary_nltk.split())
+    # page_rank
+    final_summary_page_rank = main_summary(rawtext)
+    summary_reading_time_page_rank = readingTime(final_summary_page_rank)
+    page_rank_words = len(final_summary_page_rank.split())
     # Sumy
     final_summary_sumy = sumy_summary(rawtext)
     summary_reading_time_sumy = readingTime(final_summary_sumy)
     sumy_words = len(final_summary_sumy.split())
 
-    return render_template('compare.html', spacy_words=spacy_words, genism_words=genism_words, nltk_words=nltk_words, sumy_words=sumy_words, final_summary_spacy=final_summary_spacy, final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,  final_summary_sumy=final_summary_sumy, summary_reading_time=summary_reading_time, summary_reading_time_gensim=summary_reading_time_gensim, summary_reading_time_sumy=summary_reading_time_sumy, summary_reading_time_nltk=summary_reading_time_nltk)
+    return render_template('compare.html', spacy_words=spacy_words, genism_words=genism_words, page_rank_words=page_rank_words, sumy_words=sumy_words, final_summary_spacy=final_summary_spacy, final_summary_gensim=final_summary_gensim, final_summary_page_rank=final_summary_page_rank,  final_summary_sumy=final_summary_sumy, summary_reading_time=summary_reading_time, summary_reading_time_gensim=summary_reading_time_gensim, summary_reading_time_sumy=summary_reading_time_sumy, summary_reading_time_page_rank=summary_reading_time_page_rank)
 
 
 @app.route('/comparer', methods=['GET', 'POST'])
@@ -135,16 +131,16 @@ def comparer():
         final_summary_gensim = summarize(rawtext)
         summary_reading_time_gensim = readingTime(final_summary_gensim)
         genism_words = len(final_summary_gensim.split())
-        # NLTK
-        final_summary_nltk = nltk_summarizer(rawtext)
-        summary_reading_time_nltk = readingTime(final_summary_nltk)
-        nltk_words = len(final_summary_nltk.split())
+        # page_rank
+        final_summary_page_rank = main_summary(rawtext)
+        summary_reading_time_page_rank = readingTime(final_summary_page_rank)
+        page_rank_words = len(final_summary_page_rank.split())
         # Sumy
         final_summary_sumy = sumy_summary(rawtext)
         summary_reading_time_sumy = readingTime(final_summary_sumy)
         sumy_words = len(final_summary_sumy.split())
 
-    return render_template('compare.html', spacy_words=spacy_words, genism_words=genism_words, nltk_words=nltk_words, sumy_words=sumy_words, final_summary_spacy=final_summary_spacy, final_summary_gensim=final_summary_gensim, final_summary_nltk=final_summary_nltk,  final_summary_sumy=final_summary_sumy, summary_reading_time=summary_reading_time, summary_reading_time_gensim=summary_reading_time_gensim, summary_reading_time_sumy=summary_reading_time_sumy, summary_reading_time_nltk=summary_reading_time_nltk)
+    return render_template('compare.html', spacy_words=spacy_words, genism_words=genism_words, page_rank_words=page_rank_words, sumy_words=sumy_words, final_summary_spacy=final_summary_spacy, final_summary_gensim=final_summary_gensim, final_summary_page_rank=final_summary_page_rank,  final_summary_sumy=final_summary_sumy, summary_reading_time=summary_reading_time, summary_reading_time_gensim=summary_reading_time_gensim, summary_reading_time_sumy=summary_reading_time_sumy, summary_reading_time_page_rank=summary_reading_time_page_rank)
 
 
 if __name__ == '__main__':
