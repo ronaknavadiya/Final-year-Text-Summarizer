@@ -142,7 +142,11 @@
                         placeholder="Your input text...">{{ctext}}</textarea>
 
                     <br />
-                    <p>Reading Time: <span style="color:#0091EA;">{{ final_reading_time }} min </span></p>
+                    <p>
+                        <b>Reading Time: </b><span style="color:#0091EA;">{{ final_reading_time }} min </span>
+                        &nbsp;
+                        <b> Total words:</b> <span style="color:#0091EA;">{{ctext_words}} </span>
+                    </p>
                 </form>
             </div>
             <div class="col col-sm-6">
@@ -150,7 +154,11 @@
                 <textarea disabled class="col col-11" rows="10" name="styled-textarea" id="styled"
                     onfocus="this.value=''; setbg('#e5fff3');" onblur="setbg('white')"
                     placeholder="Your Text Summarization...">{{ final_summary }}</textarea>
-                    <p>Reading Time: <span style="color:#0091EA;">{{ summary_reading_time }} min </span></p>
+                    <p>
+                        <b>Reading Time:</b> <span style="color:#0091EA;">{{ summary_reading_time }} min </span>
+                        &nbsp;
+                        <b> Total words:</b> <span style="color:#0091EA;">{{spacy_words}} </span>
+                    </p>
             </div>
 
         </div>
