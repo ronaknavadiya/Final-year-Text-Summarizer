@@ -18,9 +18,8 @@ import spacy
 nlp = spacy.load('en_core_web_sm')
 app = Flask(__name__)
 
+
 # Sumy
-
-
 def sumy_summary(docx):
     parser = PlaintextParser.from_string(docx, Tokenizer("english"))
     lex_summarizer = LexRankSummarizer()
@@ -65,6 +64,8 @@ def analyze():
         rawtext = request.form['rawtext']
         final_reading_time = readingTime(rawtext)
         final_summary = main_summary(rawtext)
+        global d_summary
+        d_summary = final_summary
         summary_reading_time = readingTime(final_summary)
         spacy_words = len(final_summary.split())
         ctext_words = len(rawtext.split())
@@ -146,6 +147,19 @@ def comparer():
         sumy_words = len(final_summary_sumy.split())
 
     return render_template('compare.html', spacy_words=spacy_words, genism_words=genism_words, page_rank_words=page_rank_words, sumy_words=sumy_words, final_summary_spacy=final_summary_spacy, final_summary_gensim=final_summary_gensim, final_summary_page_rank=final_summary_page_rank,  final_summary_sumy=final_summary_sumy, summary_reading_time=summary_reading_time, summary_reading_time_gensim=summary_reading_time_gensim, summary_reading_time_sumy=summary_reading_time_sumy, summary_reading_time_page_rank=summary_reading_time_page_rank)
+
+
+@app.route('/download_summary', methods=['GET', 'POST'])
+def download_summary():
+    summary = d_summary
+    f = open('sum.txt', 'w+')
+    f.write('-------------------\n')
+    f.write(summary)
+    f.write('\n')
+    f.close
+
+    # path = "sum.txt"
+    # return send_file(path, as_attachment=True)
 
 
 if __name__ == '__main__':

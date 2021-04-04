@@ -140,7 +140,6 @@
                     <textarea disabled name="rawtext" class="col col-11" rows="10" required="true" id="styled"
                         onfocus="this.value=''; setbg('#e5fff3');" onblur="setbg('white')"
                         placeholder="Your input text...">{{ctext}}</textarea>
-
                     <br />
                     <p>
                         <b>Reading Time: </b><span style="color:#0091EA;">{{ final_reading_time }} min </span>
@@ -160,7 +159,13 @@
                         <b> Total words:</b> <span style="color:#0091EA;">{{spacy_words}} </span>
                     </p>
             </div>
-
+            <div class="col col-sm-12">
+                <h1 class="offset-5">
+                    <form method="POST" action="/download_summary"> 
+                        <button class="btn btn-success btn-rounded" type="submit">Download</button>
+                    </form>
+                </h1>
+            </div>
         </div>
 
     </div>
