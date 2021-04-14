@@ -11,12 +11,49 @@ from flask import Flask, render_template, url_for, request
 from main_summary import main_summary
 import requests
 import re
-
+import os
+from flask import send_file
+# from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 from spacy_summarization import text_summarizer
 import time
 import spacy
+import PyPDF2
+
 nlp = spacy.load('en_core_web_sm')
 app = Flask(__name__)
+# FOR cache
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['UPLOAD_FOLDER'] = "F:\\Text Summarization MAIN"
+
+
+def readDoc(name):
+    if name.lower().endswith('.txt'):
+        choice = 1
+    elif name.lower().endswith('.pdf'):
+        choice = 2
+    else:
+        choice = 3
+
+    if choice == 1:
+        f = open(name, 'r')
+        document = f.read()
+        f.close()
+
+    elif choice == 2:
+        pdfFileObj = open(name, 'rb')
+        pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+        pageObj = pdfReader.getPage(0)
+        document = pageObj.extractText()
+        pdfFileObj.close()
+
+    # # Case 3: none of the format
+    # else:
+    #     print('Failed to load a valid file')
+    #     print('Returning an empty string')
+    #     document = ''
+
+    return document
 
 
 # Sumy
@@ -64,11 +101,14 @@ def analyze():
         rawtext = request.form['rawtext']
         final_reading_time = readingTime(rawtext)
         final_summary = main_summary(rawtext)
-        global d_summary
-        d_summary = final_summary
         summary_reading_time = readingTime(final_summary)
         spacy_words = len(final_summary.split())
         ctext_words = len(rawtext.split())
+        f = open('sum1.txt', 'w+')
+        f.write('-------------------\n')
+        f.write(final_summary)
+        f.write('\n')
+        f.close()
     return render_template('index.html', ctext_words=ctext_words, spacy_words=spacy_words, ctext=rawtext, final_summary=final_summary, final_reading_time=final_reading_time, summary_reading_time=summary_reading_time)
 
 
@@ -93,6 +133,11 @@ def analyze_url():
         summary_reading_time = readingTime(final_summary)
         spacy_words = len(final_summary.split())
         ctext_words = len(rawtext.split())
+        f = open('sum1.txt', 'w+')
+        f.write('-------------------\n')
+        f.write(final_summary)
+        f.write('\n')
+        f.close()
     return render_template('index.html', ctext_words=ctext_words, spacy_words=spacy_words, final_summary=final_summary, summary_reading_time=summary_reading_time, ctext=rawtext, final_reading_time=final_reading_time,)
 
 
@@ -149,17 +194,38 @@ def comparer():
     return render_template('compare.html', spacy_words=spacy_words, genism_words=genism_words, page_rank_words=page_rank_words, sumy_words=sumy_words, final_summary_spacy=final_summary_spacy, final_summary_gensim=final_summary_gensim, final_summary_page_rank=final_summary_page_rank,  final_summary_sumy=final_summary_sumy, summary_reading_time=summary_reading_time, summary_reading_time_gensim=summary_reading_time_gensim, summary_reading_time_sumy=summary_reading_time_sumy, summary_reading_time_page_rank=summary_reading_time_page_rank)
 
 
-@app.route('/download_summary', methods=['GET', 'POST'])
-def download_summary():
-    summary = d_summary
-    f = open('sum.txt', 'w+')
-    f.write('-------------------\n')
-    f.write(summary)
-    f.write('\n')
-    f.close
+@app.route('/download')
+def download_file():
+    return send_file("F:\Text Summarization MAIN\sum1.txt", as_attachment=True, attachment_filename="sum1.txt", cache_timeout=0)
 
-    # path = "sum.txt"
-    # return send_file(path, as_attachment=True)
+
+# @app.route('/upload')
+# def upload_file():
+#     return render_template('upload.html')
+
+
+@app.route('/uploader', methods=['GET', 'POST'])
+def uploader():
+    if request.method == 'POST':
+        f = request.files['file1']
+        fName = f.filename
+        print(fName)
+        f.save(os.path.join(
+            app.config['UPLOAD_FOLDER'], secure_filename(f.filename)))
+        rawtext = readDoc(fName)
+        print("pdf content:", rawtext)
+
+        final_reading_time = readingTime(rawtext)
+        final_summary = main_summary(rawtext)
+        summary_reading_time = readingTime(final_summary)
+        spacy_words = len(final_summary.split())
+        ctext_words = len(rawtext.split())
+        f = open('sum1.txt', 'w+')
+        f.write('-------------------\n')
+        f.write(final_summary)
+        f.write('\n')
+        f.close()
+    return render_template('index.html', ctext_words=ctext_words, spacy_words=spacy_words, ctext=rawtext, final_summary=final_summary, final_reading_time=final_reading_time, summary_reading_time=summary_reading_time)
 
 
 if __name__ == '__main__':

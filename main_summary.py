@@ -73,7 +73,7 @@ def main_summary(raw_text):
     model = sentence_list
 
     summary = " ".join(str(x) for x in sentence_list)
-    print(summary)
+
     return(summary)
 
 
