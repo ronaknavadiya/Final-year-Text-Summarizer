@@ -3,12 +3,11 @@ from flask.helpers import flash
 from sumy.summarizers.lex_rank import LexRankSummarizer
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.parsers.plaintext import PlaintextParser
-from nltk_summarization import nltk_summarizer
+
 from gensim.summarization import summarize
 import urllib
-from urllib.request import urlopen
 from bs4 import BeautifulSoup
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, request
 from main_summary import main_summary
 import requests
 import re
@@ -16,9 +15,7 @@ import os
 from flask import send_file
 from werkzeug.utils import secure_filename
 from spacy_summarization import text_summarizer
-import time
 import spacy
-import PyPDF2
 
 
 nlp = spacy.load('en_core_web_sm')
@@ -64,7 +61,7 @@ def readingTime(mytext):
     estimatedTime = total_words/200.0
     return estimatedTime
 
-# # Fetch Text From Url
+# Fetch Text From Url
 
 
 def get_text(url):
