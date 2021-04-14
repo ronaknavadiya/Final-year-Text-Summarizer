@@ -36,8 +36,8 @@
                                 Compare</span></a></li>
                                 
                     
-                    <li class="nav-item"><a class="nav-link" href="./contactus.html"><span
-                                class="fa fa-address-card fa-lg"> Contact</span></a></li>
+                    <!-- <li class="nav-item"><a class="nav-link" href="./contactus.html"><span
+                                class="fa fa-address-card fa-lg"> Contact</span></a></li> -->
                 </ul>
                 <!-- <span class="navbar-text">
                     <a id="loginButton">
@@ -121,14 +121,14 @@
             </div>
             <div class="col col-sm-6">
                 <h2 class="title-heading">Content URL</h2>
-                <form method="POST" action="/analyze_url">
-                    <input type="text" name="raw_url" placeholder="Enter URL Here"  required="true" style="width: 100%">
+                <form method="POST" action="/analyze_url"  runat="server">
+                    <input type="text" name="raw_url" placeholder="Enter URL Here"  required="true" style="width: 100%" >
                     <br>
                     <br>
                     <button class="btn btn-danger btn-rounded" type="reset">Clear</button>
                     <button class="btn btn-success btn-rounded" type="submit">Summarize</button>
                 </form>
-                <h2 class="title-heading">Upload your file here...</h2>
+                <h2 class="title-heading">Upload your .txt file here...</h2>
                 <form action="/uploader" method="POST" enctype="multipart/form-data">
                     <input type="file" name="file1" />
                     <button class="btn btn-success btn-rounded" type="submit">Upload</button>

@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from flask.helpers import flash
 from sumy.summarizers.lex_rank import LexRankSummarizer
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.parsers.plaintext import PlaintextParser
@@ -13,12 +14,12 @@ import requests
 import re
 import os
 from flask import send_file
-# from werkzeug import secure_filename
 from werkzeug.utils import secure_filename
 from spacy_summarization import text_summarizer
 import time
 import spacy
 import PyPDF2
+
 
 nlp = spacy.load('en_core_web_sm')
 app = Flask(__name__)
@@ -30,28 +31,18 @@ app.config['UPLOAD_FOLDER'] = "F:\\Text Summarization MAIN"
 def readDoc(name):
     if name.lower().endswith('.txt'):
         choice = 1
-    elif name.lower().endswith('.pdf'):
-        choice = 2
     else:
-        choice = 3
+        choice = 2
 
     if choice == 1:
         f = open(name, 'r')
         document = f.read()
         f.close()
-
-    elif choice == 2:
-        pdfFileObj = open(name, 'rb')
-        pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
-        pageObj = pdfReader.getPage(0)
-        document = pageObj.extractText()
-        pdfFileObj.close()
-
-    # # Case 3: none of the format
-    # else:
-    #     print('Failed to load a valid file')
-    #     print('Returning an empty string')
-    #     document = ''
+    else:
+        flash(u'Invalid password provided', 'error')
+        print('Failed to load a valid file')
+        print('Returning an empty string')
+        document = ''
 
     return document
 
